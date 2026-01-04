@@ -1,0 +1,79 @@
+.product-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.details-left img {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.details-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.details-right .price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-green);
+}
+
+.add-to-cart {
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-green);
+  color: white;
+  border-radius: 5px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.add-to-cart:hover {
+  background-color: #246236;
+}
+
+.reviews-section {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.add-review-form textarea {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  resize: vertical;
+}
+
+.add-review-form select {
+  padding: 0.3rem;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  width: 100px;
+}
+
+.add-review-form button {
+  padding: 0.4rem 0.8rem;
+  background-color: var(--primary-green);
+  color: white;
+  border-radius: 5px;
+  width: fit-content;
+  font-weight: 600;
+}
+
+.add-review-form button:hover {
+  background-color: #246236;
+}

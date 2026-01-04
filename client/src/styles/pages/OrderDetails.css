@@ -1,0 +1,25 @@
+.order-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.order-products-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-products-table th, .order-products-table td {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.order-products-table th {
+  background-color: var(--pale-slate);
+  color: var(--primary-green);
+  text-align: left;
+}
+
+.order-products-table tr:nth-child(even) {
+  background-color: var(--soft-linen);
+}

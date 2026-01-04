@@ -1,0 +1,55 @@
+.dashboard-section {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th, .orders-table td {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.orders-table th {
+  background-color: var(--pale-slate);
+  color: var(--primary-green);
+  text-align: left;
+}
+
+.orders-table tr:nth-child(even) {
+  background-color: var(--soft-linen);
+}
+
+.order-link {
+  color: var(--primary-green);
+  text-decoration: none;
+}
+
+.order-link:hover {
+  text-decoration: underline;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: var(--muted-text);
+}
+
+.filters select {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
