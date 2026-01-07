@@ -10,7 +10,11 @@ export const getProductById = async (id) => {
   return res.json();
 };
 
-// Admin
+export const getCategories = async () => {
+  const res = await fetch(`${API_URL}/categories`);
+  return res.json();
+};
+
 export const getProductStats = async () => {
   const res = await fetch(`${API_URL}/stats`);
   return res.json();

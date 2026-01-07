@@ -8,7 +8,10 @@ export const getReviewsByProduct = async (productId, query = '') => {
 export const createReview = async (token, reviewData) => {
   const res = await fetch(API_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    headers: { 
+      'Content-Type': 'application/json', 
+      'Authorization': `Bearer ${token}` 
+    },
     body: JSON.stringify(reviewData)
   });
   return res.json();
@@ -17,7 +20,7 @@ export const createReview = async (token, reviewData) => {
 export const deleteReview = async (token, reviewId) => {
   const res = await fetch(`${API_URL}/${reviewId}`, {
     method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { 'Authorization': `Bearer ${token}` }
   });
   return res.json();
 };

@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 import { User } from '#models';
 
 const generateToken = (id) => {
@@ -8,15 +7,10 @@ const generateToken = (id) => {
   });
 };
 
-/**
- * @desc    Register user
- * @route   POST /api/auth/register
- * @access  Public
- */
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
+    
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -32,13 +26,10 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
-
     const user = await User.create({
       name,
       email,
-      passwordHash,
+      password, 
     });
 
     return res.status(201).json({
@@ -47,7 +38,7 @@ const registerUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        isAdmin: user.isAdmin,
         token: generateToken(user._id),
       },
     });
@@ -59,15 +50,10 @@ const registerUser = async (req, res) => {
   }
 };
 
-/**
- * @desc    Login user
- * @route   POST /api/auth/login
- * @access  Public
- */
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -76,15 +62,15 @@ const loginUser = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-
-    if (user && (await bcrypt.compare(password, user.passwordHash))) {
+    
+    if (user && user.password === password) {
       return res.json({
         success: true,
         data: {
           _id: user._id,
           name: user.name,
           email: user.email,
-          role: user.role,
+          isAdmin: user.isAdmin,
           token: generateToken(user._id),
         },
       });

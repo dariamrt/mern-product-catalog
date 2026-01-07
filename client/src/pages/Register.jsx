@@ -25,8 +25,10 @@ export default function Register() {
 
     try {
       const res = await UserService.register(name, email, password);
+      
       if (res.success) {
-        login(res.data.user, res.data.token); 
+        const { token, ...userData } = res.data;
+        login(userData, token); 
         navigate("/", { replace: true });
       } else {
         setError(res.message || "Registration failed");

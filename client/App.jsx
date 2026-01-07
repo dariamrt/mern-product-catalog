@@ -18,12 +18,20 @@ const App = () => {
   return (
     <CartProvider>
       <Routes>
-
+        {/* auth */}
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
 
+        {/* public */}
+        <Route element={<GlobalLayout />}>
+          <Route path="/" element={<ProductCatalog />} />
+          <Route path="/products" element={<ProductCatalog />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
+        </Route>
+
+        {/* protected */}
         <Route
           element={
             <ProtectedRoute>
@@ -31,17 +39,13 @@ const App = () => {
             </ProtectedRoute>
           }
         >
-          <Route path="/" element={<ProductCatalog />} />
-          <Route path="/products" element={<ProductCatalog />} />
-          <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/orders/:id" element={<OrderDetails />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
-
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </CartProvider>
   );

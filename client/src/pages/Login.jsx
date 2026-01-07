@@ -18,7 +18,8 @@ export default function Login() {
     try {
       const res = await UserService.login(email, password);
       if (res.success) {
-        login(res.data.user, res.data.token);
+        const { token, ...user } = res.data;
+        login(user, token);
         navigate("/", { replace: true });
       } else {
         setError(res.message || "Login failed");

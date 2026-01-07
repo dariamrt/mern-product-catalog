@@ -1,11 +1,6 @@
 import mongoose from 'mongoose';
 import { Product, Review } from '#models';
 
-/**
- * @desc    Create product
- * @route   POST /api/products
- * @access  Admin (later)
- */
 const createProduct = async (req, res) => {
   try {
     const product = await Product.create(req.body);
@@ -22,20 +17,17 @@ const createProduct = async (req, res) => {
   }
 };
 
-/**
- * @desc    Get all products
- * @route   GET /api/products
- * @access  Public
- */
 const getProducts = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 12;
     const skip = (page - 1) * limit;
 
-    const filter = { isActive: true };
+    const filter = { 
+      isActive: true,
+      countInStock: { $gt: 0 }
+    };
 
-    // --- Filtering ---
     if (req.query.keyword) {
       filter.name = { $regex: req.query.keyword, $options: 'i' };
     }
@@ -54,8 +46,7 @@ const getProducts = async (req, res) => {
       filter.rating = { $gte: Number(req.query.minRating) };
     }
 
-    // --- Sorting ---
-    let sort = { createdAt: -1 }; // default
+    let sort = { createdAt: -1 };
     if (req.query.sort) {
       sort = {};
       const fields = req.query.sort.split(',');
@@ -93,78 +84,33 @@ const getProducts = async (req, res) => {
   }
 };
 
-/**
- * @desc    Get product by ID
- * @route   GET /api/products/:id
- * @access  Public
- */
-const getProductById = async (req, res) => {
-  try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid product ID',
-      });
-    }
-
-    const product = await Product.findById(req.params.id);
-
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found',
-      });
-    }
-
-    return res.json({
-      success: true,
-      data: product,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-/**
- * @desc    Update product
- * @route   PUT /api/products/:id
- * @access  Admin (later)
- */
 const updateProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true, runValidators: true }
     );
-
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: 'Product not found',
-      });
-    }
-
-    return res.json({
-      success: true,
-      data: product,
-    });
+    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+    return res.json({ success: true, data: product });
   } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
-/**
- * @desc    Delete product (soft delete)
- * @route   DELETE /api/products/:id
- * @access  Admin (later)
- */
+const getProductById = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'Invalid product ID' });
+    }
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+    return res.json({ success: true, data: product });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndUpdate(
@@ -192,16 +138,11 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-/**
- * @desc    Get product stats (avg price, top rated)
- * @route   GET /api/products/stats
- * @access  Public
- */
 const getProductStats = async (req, res) => {
   try {
     const stats = await Product.aggregate([
       {
-        $match: { isActive: true },
+        $match: { isActive: true, countInStock: { $gt: 0 } },
       },
       {
         $group: {
@@ -213,7 +154,7 @@ const getProductStats = async (req, res) => {
       },
     ]);
 
-    const topRated = await Product.find({ isActive: true })
+    const topRated = await Product.find({ isActive: true, countInStock: { $gt: 0 } })
       .sort({ rating: -1 })
       .limit(5);
 
@@ -232,6 +173,21 @@ const getProductStats = async (req, res) => {
   }
 };
 
+const getProductCategories = async (req, res) => {
+  try {
+    const categories = await Product.distinct('category', { isActive: true, countInStock: { $gt: 0 } });
+    return res.json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export {
   createProduct,
   getProducts,
@@ -239,4 +195,5 @@ export {
   updateProduct,
   deleteProduct,
   getProductStats,
+  getProductCategories
 };

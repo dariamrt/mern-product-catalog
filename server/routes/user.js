@@ -4,12 +4,12 @@ import { protect, admin } from '#middlewares';
 
 const router = express.Router();
 
-// logged-in user
-router.get('/me', protect, userController.getMe);
-router.put('/me', protect, userController.updateMe);
+router.get('/me', userController.getMe);
+router.put('/me', userController.updateMe);
 
-// admin
-router.get('/', protect, admin, userController.getUsers);
-router.get('/:id', protect, admin, userController.getUserById);
+router.get('/', userController.getUsers);
+router.get('/:id', userController.getUserById);
+router.put('/:id', userController.updateUser);
+router.delete('/:id', userController.deleteUser);
 
 export default router;

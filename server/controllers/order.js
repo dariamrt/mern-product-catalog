@@ -1,68 +1,53 @@
 import mongoose from 'mongoose';
 import { Order, Product } from '#models';
 
-/**
- * @desc    Create new order
- * @route   POST /api/orders
- * @access  Protected
- */
 const createOrder = async (req, res) => {
   try {
-    const { items } = req.body;
+    const { items, status } = req.body;
 
     if (!items || items.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'No order items provided',
-      });
+      return res.status(400).json({ success: false, message: 'No order items provided' });
     }
 
-    // Calculate total price safely
     let totalPrice = 0;
     const processedItems = [];
 
     for (const item of items) {
       const product = await Product.findById(item.product);
-
       if (!product) {
-        return res.status(404).json({
+        return res.status(404).json({ success: false, message: `Product ${item.product} not found` });
+      }
+      if (product.countInStock < item.quantity) {
+        return res.status(400).json({
           success: false,
-          message: 'Product not found',
+          message: `Stoc insuficient pentru ${product.name}. Disponibil: ${product.countInStock}`,
         });
       }
 
       totalPrice += product.price * item.quantity;
-
       processedItems.push({
         product: product._id,
         quantity: item.quantity,
         price: product.price,
       });
+
+      product.countInStock -= item.quantity;
+      await product.save();
     }
 
     const order = await Order.create({
       user: req.user._id,
       items: processedItems,
       totalPrice,
+      status: status || 'pending'
     });
 
-    return res.status(201).json({
-      success: true,
-      data: order,
-    });
+    return res.status(201).json({ success: true, data: order });
   } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    return res.status(400).json({ success: false, message: error.message });
   }
 };
 
-/**
- * @desc    Get logged-in user's orders
- * @route   GET /api/orders/my
- * @access  Protected
- */
 const getMyOrders = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
@@ -84,7 +69,6 @@ const getMyOrders = async (req, res) => {
     }
 
     const filter = { user: req.user._id };
-
     const total = await Order.countDocuments(filter);
 
     const orders = await Order.find(filter)
@@ -111,11 +95,24 @@ const getMyOrders = async (req, res) => {
   }
 };
 
-/**
- * @desc    Get order by ID
- * @route   GET /api/orders/:id
- * @access  Protected
- */
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Comanda nu a fost gasita' });
+    }
+
+    order.status = status;
+    await order.save();
+
+    return res.json({ success: true, data: order });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 const getOrderById = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -136,8 +133,10 @@ const getOrderById = async (req, res) => {
       });
     }
 
-    // Only owner (or admin later) can access
-    if (order.user._id.toString() !== req.user._id.toString()) {
+    const isOwner = order.user._id.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin' || req.user.isAdmin === true;
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to view this order',
@@ -156,11 +155,6 @@ const getOrderById = async (req, res) => {
   }
 };
 
-/**
- * @desc    Get all orders
- * @route   GET /api/orders
- * @access  Admin (later)
- */
 const getOrders = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
@@ -181,9 +175,14 @@ const getOrders = async (req, res) => {
       sort.createdAt = -1;
     }
 
-    const total = await Order.countDocuments();
+    const filter = {};
+    if (req.query.status) {
+      filter.status = req.query.status;
+    }
 
-    const orders = await Order.find()
+    const total = await Order.countDocuments(filter);
+
+    const orders = await Order.find(filter)
       .populate('user', 'name email')
       .populate('items.product', 'name price')
       .sort(sort)
@@ -208,10 +207,10 @@ const getOrders = async (req, res) => {
   }
 };
 
-
 export {
   createOrder,
   getMyOrders,
   getOrderById,
   getOrders,
+  updateOrderStatus
 };

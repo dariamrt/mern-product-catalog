@@ -9,15 +9,13 @@ dotenv.config({ quiet: true });
 const app = express();
 connectDB();
 
-// middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// api + root routes
 app.use('/api', mainRouter);
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to this product catalog' });
+  res.json({ message: 'Welcome to this cute product catalog' });
 });
 
 const PORT = process.env.PORT || 4040;

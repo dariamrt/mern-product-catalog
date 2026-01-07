@@ -1,9 +1,6 @@
 import mongoose from 'mongoose';
 import { Review, Product } from '#models';
 
-/**
- * Helper: Recalculate product rating
- */
 const updateProductRating = async (productId) => {
   const stats = await Review.aggregate([
     { $match: { product: new mongoose.Types.ObjectId(productId) } },
@@ -29,11 +26,6 @@ const updateProductRating = async (productId) => {
   }
 };
 
-/**
- * @desc    Create review
- * @route   POST /api/reviews
- * @access  Protected
- */
 const createReview = async (req, res) => {
   try {
     const { product, rating, comment } = req.body;
@@ -85,11 +77,6 @@ const createReview = async (req, res) => {
   }
 };
 
-/**
- * @desc    Get reviews for a product
- * @route   GET /api/reviews/product/:productId
- * @access  Public
- */
 const getReviewsByProduct = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -110,7 +97,6 @@ const getReviewsByProduct = async (req, res) => {
       filter.rating = { $gte: Number(req.query.minRating) };
     }
 
-    // Sorting
     let sort = { createdAt: -1 };
     if (req.query.sort) {
       sort = {};
@@ -150,11 +136,6 @@ const getReviewsByProduct = async (req, res) => {
   }
 };
 
-/**
- * @desc    Delete review
- * @route   DELETE /api/reviews/:id
- * @access  Protected (owner)
- */
 const deleteReview = async (req, res) => {
   try {
     const review = await Review.findById(req.params.id);
