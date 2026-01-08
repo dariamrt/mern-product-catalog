@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom';
 import '../styles/components/ProductCard.css';
 
 const ProductCard = ({ product, onAddToCart }) => {
+  const imageSrc = product.image || '/no-image-available.png';
+  
   return (
     <div className="product-card">
-      {product.image && (
-        <Link to={`/products/${product._id}`} className="product-image-link">
-          <img src={product.image} alt={product.name} className="product-image" />
-        </Link>
-      )}
+      <Link to={`/products/${product._id}`} className="product-image-link">
+        <img src={imageSrc} alt={product.name} className="product-image" />
+      </Link>
 
       <div className="product-info">
         <Link to={`/products/${product._id}`} className="product-name-link">

@@ -31,7 +31,16 @@ export default function Login() {
 
   return (
     <div className="auth-container">
-      <h2>Login</h2>
+      <Link to="/" className="auth-back">
+        ← Înapoi la produse
+      </Link>
+      
+      <div className="auth-logo">
+        <img src="/logo-vibe.png" alt="Vibe Logo" />
+        <h2>Bine ai revenit!</h2>
+        <p className="auth-tagline">Conectează-te pentru a continua</p>
+      </div>
+
       {error && <p className="auth-error">{error}</p>}
 
       <form className="auth-form" onSubmit={handleSubmit}>
@@ -44,17 +53,17 @@ export default function Login() {
         />
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Parolă"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit">Intră în cont</button>
       </form>
 
-      <p style={{ marginTop: "1rem", textAlign: "center" }}>
+      <p className="auth-footer">
         Nu ai cont?{" "}
-        <Link to="/register" style={{ color: "var(--primary-green)", fontWeight: 600 }}>
+        <Link to="/register" className="auth-link">
           Înregistrează-te
         </Link>
       </p>

@@ -20,7 +20,10 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <Link to="/" className="navbar-logo">Vibe & Byte</Link>
+      <Link to="/" className="navbar-logo">
+        <img src="/logo-vibe.png" alt="Vibe & Byte" className="navbar-logo-img" />
+        <span className="navbar-logo-tagline">Smart picks. One checkout.</span>
+      </Link>
       <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
         <li><Link to="/">Produse</Link></li>
         
@@ -30,10 +33,11 @@ const Navbar = () => {
               <>
                 <li>
                   <Link to="/profile" className="navbar-user">
-                    <User size={18} /> <span>{user.name}</span>
+                    <User size={18} />
+                    <span>{user.name}</span>
                   </Link>
                 </li>
-                <li className="navbar-cart" onClick={() => navigate('/cart')} style={{cursor: 'pointer'}}>
+                <li className="navbar-cart" onClick={() => navigate('/cart')}>
                   <ShoppingCart size={20} />
                   {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
                 </li>
@@ -42,18 +46,20 @@ const Navbar = () => {
             {user.isAdmin && (
               <li>
                 <Link to="/dashboard" className="navbar-user">
-                  <LayoutDashboard size={18} /> <span>Dashboard</span>
+                  <LayoutDashboard size={18} />
+                  <span>Dashboard</span>
                 </Link>
               </li>
             )}
-            <li onClick={handleLogout} style={{cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px'}}>
-              <LogOut size={18} /> Logout
+            <li className="navbar-logout" onClick={handleLogout}>
+              <LogOut size={18} />
+              <span>Logout</span>
             </li>
           </>
         ) : (
           <>
-            <li><Link to="/login" style={{ fontWeight: 'bold' }}>Login</Link></li>
-            <li><Link to="/register">Inregistrare</Link></li>
+            <li><Link to="/login" className="navbar-login">Login</Link></li>
+            <li><Link to="/register">Înregistrare</Link></li>
           </>
         )}
       </ul>

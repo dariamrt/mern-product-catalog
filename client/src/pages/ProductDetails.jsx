@@ -81,6 +81,8 @@ const ProductDetails = () => {
   if (loading) return <div className="product-details-container"><p>Loading...</p></div>;
   if (!product) return <div className="product-details-container"><p>Produsul nu a fost gasit.</p></div>;
 
+  const imageSrc = product.image || '/no-image-available.png';
+
   return (
     <div className="product-details-container">
       <Modal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)}>
@@ -96,7 +98,7 @@ const ProductDetails = () => {
 
       <div className="product-main">
         <div className="details-left">
-          {product.image && <img src={product.image} alt={product.name} />}
+          <img src={imageSrc} alt={product.name} />
         </div>
 
         <div className="details-right">

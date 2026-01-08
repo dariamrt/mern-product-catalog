@@ -40,12 +40,20 @@ export default function Register() {
 
   return (
     <div className="auth-container">
-      <h2>Register</h2>
+      <Link to="/" className="auth-back">
+        ← Înapoi la produse
+      </Link>
+      <div className="auth-logo">
+        <img src="/logo-vibe.png" alt="Vibe Logo" />
+        <h2>Creează cont nou</h2>
+        <p className="auth-tagline">Alătură-te comunității noastre</p>
+      </div>
+
       {error && <p className="auth-error">{error}</p>}
 
       <form className="auth-form" onSubmit={handleSubmit}>
         <input
-          placeholder="Name"
+          placeholder="Nume"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -59,18 +67,18 @@ export default function Register() {
         />
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Parolă"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Register</button>
+        <button type="submit">Înregistrează-te</button>
       </form>
 
-      <p style={{ marginTop: "1rem", textAlign: "center" }}>
+      <p className="auth-footer">
         Ai deja cont?{" "}
-        <Link to="/login" style={{ color: "var(--primary-green)", fontWeight: 600 }}>
-          Login
+        <Link to="/login" className="auth-link">
+          Intră în cont
         </Link>
       </p>
     </div>
